@@ -1,0 +1,56 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+def nexus = [user: nexusUsername, password: nexusPassword]
+nexus.groupId = 'com.vokalinteractive.widget'
+nexus.github = 'vokalinteractive/Android-DateTimePicker'
+nexus.artifactId = 'datetimepicker'
+nexus.name = 'datetimepicker'
+nexus.description = 'A pure clone of https://android.googlesource.com/platform/frameworks/opt/datetimepicker/'
+nexus.version = '0.1.1'
+
+signing {
+    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+}
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        repository(url: sonatypeRepo) {
+            authentication(userName: sonatypeUsername, password: sonatypePassword)
+        }
+
+        pom.project {
+            name nexus.name
+            packaging 'aar'
+            description nexus.description
+            url 'https://www.github.com/vokalinteractive/Android-DateTimePicker'
+
+            scm {
+                url = 'scm:git@https://www.github.com/vokalinteractive/Android-DateTimePicker.git'
+                connection 'git@https://www.github.com/vokalinteractive/Android-DateTimePicker.git'
+                developerConnection 'git@https://www.github.com/vokalinteractive/Android-DateTimePicker.git'
+            }
+
+            licenses {
+                license {
+                    name = 'Apache 2.0'
+                    url = 'http://www.apache.org/licenses/LICENSE-2.0'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'wmbest2'
+                    name 'William Best'
+                    email 'bill.best@vokalinteractive.com'
+                }
+            }
+
+            groupId nexus.groupId
+            artifactId nexus.artifactId
+            version nexus.version
+        }
+    }
+}

@@ -10,7 +10,7 @@ buildscript {
 }
 
 group = 'com.vokalinteractive.widgets'
-version = '0.1.0'
+version = '0.1.1'
 
 task wrapper(type: Wrapper) {gradleVersion = '1.12'}
 
@@ -36,4 +36,8 @@ android {
 	}
 
     lintOptions.disable ('MissingTranslation', 'ValidFragment')
+}
+
+if (file('upload.gradle').exists()) {
+    apply from: 'upload.gradle'
 }

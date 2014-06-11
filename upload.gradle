@@ -11,6 +11,7 @@ nexus.version = '0.1.1'
 
 signing {
     required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
 }
 
 uploadArchives {

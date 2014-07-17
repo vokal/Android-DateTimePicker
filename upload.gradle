@@ -1,13 +1,13 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-def nexus = [user: nexusUsername, password: nexusPassword]
+def nexus = [user: "", password: ""]
 nexus.groupId = 'com.vokalinteractive.widget'
 nexus.github = 'vokalinteractive/Android-DateTimePicker'
 nexus.artifactId = 'datetimepicker'
 nexus.name = 'datetimepicker'
 nexus.description = 'A pure clone of https://android.googlesource.com/platform/frameworks/opt/datetimepicker/'
-nexus.version = '0.1.1'
+nexus.version = '0.1.2'
 
 signing {
     required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }

@@ -35,6 +35,8 @@ public class SimpleMonthView extends MonthView {
 
         if (mHasToday && mToday == day) {
             mMonthNumPaint.setColor(mTodayNumberColor);
+        } else if (!isValid(day)) {
+            mMonthNumPaint.setColor(mDisabledTextColor);
         } else {
             mMonthNumPaint.setColor(mDayTextColor);
         }

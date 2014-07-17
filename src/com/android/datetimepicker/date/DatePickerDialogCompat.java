@@ -64,16 +64,16 @@ public class DatePickerDialogCompat extends DialogFragment implements
     private static final String KEY_SELECTED_DAY = "day";
     private static final String KEY_LIST_POSITION = "list_position";
     private static final String KEY_WEEK_START = "week_start";
-    private static final String KEY_YEAR_START = "year_start";
-    private static final String KEY_YEAR_END = "year_end";
+    private static final String KEY_START = "start";
+    private static final String KEY_END = "end";
     private static final String KEY_CURRENT_VIEW = "current_view";
     private static final String KEY_LIST_POSITION_OFFSET = "list_position_offset";
 
-    private static final int DEFAULT_START_YEAR = 1900;
-    private static final int DEFAULT_END_YEAR = 2100;
-
     private static final int ANIMATION_DURATION = 300;
     private static final int ANIMATION_DELAY = 500;
+
+    protected static final long DEFAULT_START = -2208988800000L;
+    protected static final long DEFAULT_END = 4133894400000L;
 
     private static SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy", Locale.getDefault());
     private static SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("dd", Locale.getDefault());
@@ -96,8 +96,8 @@ public class DatePickerDialogCompat extends DialogFragment implements
     private int mCurrentView = UNINITIALIZED;
 
     private int mWeekStart = mCalendar.getFirstDayOfWeek();
-    private int mMinYear = DEFAULT_START_YEAR;
-    private int mMaxYear = DEFAULT_END_YEAR;
+    private Calendar mMinDate = getCalendar(DEFAULT_START);
+    private Calendar mMaxDate = getCalendar(DEFAULT_END);
 
     private HapticFeedbackController mHapticFeedbackController;
 
@@ -108,6 +108,12 @@ public class DatePickerDialogCompat extends DialogFragment implements
     private String mSelectDay;
     private String mYearPickerDescription;
     private String mSelectYear;
+
+    private Calendar getCalendar(long aValue) {
+        Calendar instance = Calendar.getInstance();
+        instance.setTimeInMillis(aValue);
+        return instance;
+    }
 
     /**
      * The callback used to indicate the user is done filling in the date.
@@ -169,8 +175,8 @@ public class DatePickerDialogCompat extends DialogFragment implements
         outState.putInt(KEY_SELECTED_MONTH, mCalendar.get(Calendar.MONTH));
         outState.putInt(KEY_SELECTED_DAY, mCalendar.get(Calendar.DAY_OF_MONTH));
         outState.putInt(KEY_WEEK_START, mWeekStart);
-        outState.putInt(KEY_YEAR_START, mMinYear);
-        outState.putInt(KEY_YEAR_END, mMaxYear);
+        outState.putLong(KEY_START, mMinDate.getTimeInMillis());
+        outState.putLong(KEY_END, mMaxDate.getTimeInMillis());
         outState.putInt(KEY_CURRENT_VIEW, mCurrentView);
         int listPosition = -1;
         if (mCurrentView == MONTH_AND_DAY_VIEW) {
@@ -203,8 +209,8 @@ public class DatePickerDialogCompat extends DialogFragment implements
         int currentView = MONTH_AND_DAY_VIEW;
         if (savedInstanceState != null) {
             mWeekStart = savedInstanceState.getInt(KEY_WEEK_START);
-            mMinYear = savedInstanceState.getInt(KEY_YEAR_START);
-            mMaxYear = savedInstanceState.getInt(KEY_YEAR_END);
+            mMinDate = getCalendar(savedInstanceState.getInt(KEY_START));
+            mMaxDate = getCalendar(savedInstanceState.getInt(KEY_END));
             currentView = savedInstanceState.getInt(KEY_CURRENT_VIEW);
             listPosition = savedInstanceState.getInt(KEY_LIST_POSITION);
             listPositionOffset = savedInstanceState.getInt(KEY_LIST_POSITION_OFFSET);
@@ -357,12 +363,12 @@ public class DatePickerDialogCompat extends DialogFragment implements
         }
     }
 
-    public void setYearRange(int startYear, int endYear) {
-        if (endYear <= startYear) {
-            throw new IllegalArgumentException("Year end must be larger than year start");
+    public void setDateRange(Calendar start, Calendar end) {
+        if (end.getTimeInMillis() <= start.getTimeInMillis()) {
+            throw new IllegalArgumentException("end must be larger than start");
         }
-        mMinYear = startYear;
-        mMaxYear = endYear;
+        mMinDate = start;
+        mMaxDate = end;
         if (mDayPickerView != null) {
             mDayPickerView.onChange();
         }
@@ -426,13 +432,33 @@ public class DatePickerDialogCompat extends DialogFragment implements
     }
 
     @Override
+    public int getMinDay() {
+        return mMinDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    @Override
+    public int getMaxDay() {
+        return mMaxDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    @Override
+    public int getMinMonth() {
+        return mMinDate.get(Calendar.MONTH);
+    }
+
+    @Override
+    public int getMaxMonth() {
+        return mMaxDate.get(Calendar.MONTH);
+    }
+
+    @Override
     public int getMinYear() {
-        return mMinYear;
+        return mMinDate.get(Calendar.YEAR);
     }
 
     @Override
     public int getMaxYear() {
-        return mMaxYear;
+        return mMaxDate.get(Calendar.YEAR);
     }
 
     @Override

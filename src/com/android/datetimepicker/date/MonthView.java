@@ -73,6 +73,8 @@ public abstract class MonthView extends View {
      * calculated using {@link Utils#getWeeksSinceEpochFromJulianDay}
      */
     public static final String VIEW_PARAMS_YEAR = "year";
+    public static final String VIEW_PARAMS_MIN_DAY = "min_day";
+    public static final String VIEW_PARAMS_MAX_DAY = "max_day";
     /**
      * This sets one of the days in this view as selected {@link Time#SUNDAY}
      * through {@link Time#SATURDAY}.
@@ -141,6 +143,10 @@ public abstract class MonthView extends View {
     protected int mFirstMonth = -1;
     // The month of the last day in this week
     protected int mLastMonth = -1;
+    
+    protected int mMinDay;
+
+    protected int mMaxDay;
 
     protected int mMonth;
 
@@ -178,6 +184,7 @@ public abstract class MonthView extends View {
     private boolean mLockAccessibilityDelegate;
 
     protected int mDayTextColor;
+    protected int mDisabledTextColor;
     protected int mTodayNumberColor;
     protected int mMonthTitleColor;
     protected int mMonthTitleBGColor;
@@ -194,6 +201,7 @@ public abstract class MonthView extends View {
         mMonthTitleTypeface = res.getString(R.string.sans_serif);
 
         mDayTextColor = res.getColor(R.color.date_picker_text_normal);
+        mDisabledTextColor = res.getColor(R.color.date_picker_text_disabled);
         mTodayNumberColor = res.getColor(R.color.blue);
         mMonthTitleColor = res.getColor(R.color.white);
         mMonthTitleBGColor = res.getColor(R.color.circle_background);
@@ -247,12 +255,16 @@ public abstract class MonthView extends View {
         return super.dispatchHoverEvent(event);
     }
 
+    protected boolean isValid(int day) {
+        return day >= 0 && day <= mMaxDay && day >= mMinDay;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
                 final int day = getDayFromLocation(event.getX(), event.getY());
-                if (day >= 0) {
+                if (isValid(day)) {
                     onDayClick(day);
                 }
                 break;
@@ -341,6 +353,10 @@ public abstract class MonthView extends View {
             mSelectedDay = params.get(VIEW_PARAMS_SELECTED_DAY);
         }
 
+        if (params.containsKey(VIEW_PARAMS_MIN_DAY)) {
+            mMinDay = params.get(VIEW_PARAMS_MIN_DAY);
+        }
+
         // Allocate space for caching the day numbers and focus values
         mMonth = params.get(VIEW_PARAMS_MONTH);
         mYear = params.get(VIEW_PARAMS_YEAR);
@@ -369,6 +385,11 @@ public abstract class MonthView extends View {
                 mHasToday = true;
                 mToday = day;
             }
+        }
+        if (params.containsKey(VIEW_PARAMS_MAX_DAY)) {
+            mMaxDay = params.get(VIEW_PARAMS_MAX_DAY);
+        } else {
+            mMaxDay = mNumCells;
         }
         mNumRows = calculateNumRows();
 

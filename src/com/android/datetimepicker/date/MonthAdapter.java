@@ -146,7 +146,9 @@ public abstract class MonthAdapter extends BaseAdapter implements OnDayClickList
 
     @Override
     public int getCount() {
-        return ((mController.getMaxYear() - mController.getMinYear()) + 1) * MONTHS_IN_YEAR;
+        int yearDiff = (mController.getMaxYear() - mController.getMinYear());
+        int monthDiff = (mController.getMaxMonth() - mController.getMinMonth() + 1);
+        return yearDiff * MONTHS_IN_YEAR + monthDiff;
     }
 
     @Override
@@ -188,7 +190,7 @@ public abstract class MonthAdapter extends BaseAdapter implements OnDayClickList
         }
         drawingParams.clear();
 
-        final int month = position % MONTHS_IN_YEAR;
+        final int month = position % MONTHS_IN_YEAR + mController.getMinMonth();
         final int year = position / MONTHS_IN_YEAR + mController.getMinYear();
 
         int selectedDay = -1;
@@ -203,6 +205,12 @@ public abstract class MonthAdapter extends BaseAdapter implements OnDayClickList
         drawingParams.put(MonthView.VIEW_PARAMS_SELECTED_DAY, selectedDay);
         drawingParams.put(MonthView.VIEW_PARAMS_YEAR, year);
         drawingParams.put(MonthView.VIEW_PARAMS_MONTH, month);
+
+        if (month == mController.getMinMonth()) {
+            drawingParams.put(MonthView.VIEW_PARAMS_MIN_DAY, mController.getMinDay());
+        } else {
+            drawingParams.put(MonthView.VIEW_PARAMS_MAX_DAY, mController.getMaxDay());
+        }
         drawingParams.put(MonthView.VIEW_PARAMS_WEEK_START, mController.getFirstDayOfWeek());
         v.setMonthParams(drawingParams);
         v.invalidate();

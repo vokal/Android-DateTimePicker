@@ -23,7 +23,6 @@ import com.android.datetimepicker.date.MonthAdapter.CalendarDay;
  * Controller class to communicate among the various components of the date picker dialog.
  */
 public interface DatePickerController {
-
     void onYearSelected(int year);
 
     void onDayOfMonthSelected(int year, int month, int day);
@@ -39,6 +38,14 @@ public interface DatePickerController {
     int getMinYear();
 
     int getMaxYear();
+
+    int getMinMonth();
+
+    int getMaxMonth();
+
+    int getMinDay();
+
+    int getMaxDay();
 
     void tryVibrate();
 }

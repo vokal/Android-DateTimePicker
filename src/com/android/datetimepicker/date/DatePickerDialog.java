@@ -442,6 +442,26 @@ public class DatePickerDialog extends DialogFragment implements
     public int getMaxYear() {
         return mMaxYear;
     }
+    
+    @Override
+    public int getMinDay() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxDay() {
+        return 31;
+    }
+
+    @Override
+    public int getMinMonth() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxMonth() {
+        return 11;
+    }
 
     @Override
     public int getFirstDayOfWeek() {

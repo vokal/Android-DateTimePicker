@@ -7,7 +7,7 @@ nexus.github = 'vokalinteractive/Android-DateTimePicker'
 nexus.artifactId = 'datetimepicker'
 nexus.name = 'datetimepicker'
 nexus.description = 'A pure clone of https://android.googlesource.com/platform/frameworks/opt/datetimepicker/'
-nexus.version = '0.1.2'
+nexus.version = '0.1.3'
 
 signing {
     required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
